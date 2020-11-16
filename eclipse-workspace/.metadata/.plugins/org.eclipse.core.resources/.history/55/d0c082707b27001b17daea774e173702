@@ -1,0 +1,10 @@
+
+public class Index {
+
+	public static void main(String[] args) {
+		Graph g= Graph. genBarabasiVariantRandom(500, 5,true,null);
+		//System.out.println(g.toGrahpViz());
+		g.saveFile("grafo.gv");
+	}
+
+}

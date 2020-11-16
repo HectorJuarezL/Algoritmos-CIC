@@ -1,0 +1,9 @@
+
+public class Index {
+
+	public static void main(String[] args) {
+		Graph g= Graph.genErdosRenyi(100, 100,false,null);
+		g.saveFile("grafo.gv");
+	}
+
+}

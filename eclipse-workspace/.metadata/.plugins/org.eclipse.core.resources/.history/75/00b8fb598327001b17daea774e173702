@@ -1,0 +1,24 @@
+
+public class Index {
+
+	public static void main(String[] args) {
+		/*
+		Graph g= Graph.genErdosRenyi(30, 30,false,null);
+		g.saveFile("grafo.gv");
+		
+		Graph g= Graph.genErdosRenyi(100, 100,false,null);
+		g.saveFile("grafo.gv");
+		
+		Graph g= Graph.genErdosRenyi(500, 500,false,null);
+		g.saveFile("grafo.gv");
+		
+		Graph g= Graph.genGilbert(30, 0.1,false,null);
+		g.saveFile("grafo.gv");
+		*/
+		
+		Graph g= Graph.genGilbert(100, 0.1,false,null);
+		g.saveFile("grafo.gv");
+		
+	}
+
+}

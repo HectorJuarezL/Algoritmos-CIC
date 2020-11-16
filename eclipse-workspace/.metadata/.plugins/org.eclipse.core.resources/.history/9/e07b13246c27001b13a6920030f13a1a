@@ -1,0 +1,15 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+
+public class Index {
+
+	public static void main(String[] args) {
+		Graph g= Graph. genBarabasiRandom(500, 5);
+		//System.out.println(g.toGrahpViz());
+		g.saveFile("grafo.gv");
+	}
+
+}

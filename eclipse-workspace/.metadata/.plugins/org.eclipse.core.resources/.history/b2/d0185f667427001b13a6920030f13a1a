@@ -1,0 +1,429 @@
+import java.awt.geom.Point2D;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+public class Graph {
+	
+	private HashMap<Integer, Set<Integer>> nodes = new HashMap<>();
+
+	/**
+	 * Función para añadir un nodo
+	 * @param id	recibe el identificador del nodo
+	 */
+	public void addNode(int id) {
+		if (!nodes.containsKey(id)) {
+			nodes.put(id,new HashSet<Integer>());
+		}
+	}
+	
+	
+	/**
+	 * Función para añadir un nodo con un vecindario
+	 * @param id	Identificador del nodo a añadir
+	 * @param neighbors	Conjunto con los dentificadores de sus nodos vecinos
+	 */
+	public void addNode(int id,Set<Integer> neighbors) {
+		nodes.put(id,neighbors);
+		for(Integer n:neighbors) {
+			linkNodes(id, n);
+		}
+	}
+	
+	/**
+	 * Función para eliminar un nodo
+	 * @param id	Ientificador del nodo a eliminar
+	 */
+	public void dropNode(int id) {
+		nodes.remove(id);
+	}
+	
+	
+	/**
+	 * Función para obtener los nodos vecinos de un determinado nodo
+	 * @param id	Identificador del nodo del cual se desean conocer sus vecinos
+	 * @return
+	 */
+	public Set<Integer> getNeighbors(int id) {
+		return nodes.get(id);
+	}
+	
+	/**
+	 * Función para enlazar dos nodos
+	 * @param a	identificador del primer nodo
+	 * @param b	identificador del segundo nodo
+	 * @return	retorna true si los nodos no estaban unidos previamente, en caso de que ya estuvieran unidos retorna falso
+	 */
+	public boolean linkNodes(int a, int b) {
+		if (!nodes.containsKey(a)  ) {
+			this.addNode(a);
+		}
+		if (!nodes.containsKey(b)) {
+			this.addNode(b);
+		}
+		nodes.get(a).add(b);
+		return nodes.get(b).add(a);
+	}
+	
+
+	/**
+	 * Función para guardar el nodo en un archivo
+	 * @param filename	Nombre del archivo en el que se guardará (incluye la extensión)
+	 */
+	public void saveFile(String filename) {
+		try {
+		      FileWriter myWriter = new FileWriter(filename);
+		      myWriter.write(this.toGrahpViz());
+		      myWriter.close();
+		      System.out.println("Grafo guardado correctamente como "+filename);
+		    } catch (IOException e) {
+		      System.out.println("Ha ocurrido un error al guardar el grafo: "+filename);
+		      e.printStackTrace();
+		    }
+	}
+	
+
+	/**
+	 * Función para generar un grafo usando el modelo Erdos
+	 * @param n	Número de nodos del grafo
+	 * @param m	Nmero de aristas del grafo
+	 * @return	Grafo
+	 */
+	public static Graph genErdos(int n,int m) {
+		Random r=new Random();
+		Graph g=new Graph();
+		for(int i=0;i<n;i++) {
+			g.addNode(i);
+		}
+		int i=0;
+		int j=0;
+		int k=0;
+		while(i<m) {
+			j=r.nextInt(n);
+			k=r.nextInt(n);
+			while(j==k) {
+				k=r.nextInt(n);
+			}
+			if(g.linkNodes(j,k)) {
+				i++;
+			}
+			
+		}
+		return g;
+	}
+	
+	/**
+	 * Función para generar un grafo usando el modelo Gilbert
+	 * @param n	Número de nodos del grafo
+	 * @param p	Probabilidad de union entre nodos
+	 * @return	Grafo
+	 */
+	public static Graph genGilbert(int n,double p) {
+		Random r=new Random();
+		Graph g=new Graph();
+		for(int i=0;i<n;i++) {
+			g.addNode(i);
+		}
+		double k=0;
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<n;j++) {
+				if(i!=j) {
+					k=r.nextDouble();
+					if(k<p) {
+						g.linkNodes(i,j);
+					}
+				}
+			}
+		}
+		return g;
+	}
+	
+	/**
+	 * Función para generar un grafo usando el modelo geográfico simple
+	 * @param n	Numero de nodos del gráfo
+	 * @param d	distancia mínima para union de nodos
+	 * @return	Grafo
+	 */
+	public static Graph genGeoSimple(int n,double d) {
+		Random r=new Random();
+		Graph g=new Graph();
+		Point2D[] p= new Point2D[n];
+		for(int i=0;i<n;i++) {
+			g.addNode(i);
+			p[i]= new Point2D.Double(r.nextDouble(),r.nextDouble());
+		}
+		float k=0;
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<n;j++) {
+				if(i!=j) {
+					if(p[i].distance(p[j])<d) {
+						g.linkNodes(i,j);
+					}
+				}
+			}
+		}
+		return g;
+	}
+	
+	
+	/**
+	 * Función para generar un grafo usando el modelo Barabasi.
+	 * Nota: En mis intentos por generar la variante, realicé este sin querer
+	 * por lo que decidí mantenerlo en el código.
+	 * @param n	Numero de nodos
+	 * @param d	Grado máximo de los nodo
+	 * @return	Grafo
+	 */
+	public static Graph genBarabasi(int n,double d) {
+		Random r=new Random();
+		Graph g=new Graph();
+		List<Integer> intList = new ArrayList<Integer>();
+		
+		int i,j,k,l;
+		for(i=0;i<n;i++) {
+			g.addNode(i);
+			
+		}
+		intList.add(0);
+		for(i=1;i<d;i++) {
+			intList.add(i);
+			j=i-1;
+			g.linkNodes(i,j);
+		}
+		
+		for(;i<n;i++) {
+			intList.add(i);
+			for(j=0;j<intList.size();j++) {
+				l=intList.get(j);
+				k=g.nodes.get(l).size();
+				if(r.nextDouble()<k/d) {
+					if(g.linkNodes(i,l)) {
+						if( k==d-1) {
+							intList.remove(j);
+							j--;
+						}
+						break;
+					}
+				}
+				
+			}
+			if(g.nodes.get(i).size()==0) { //en caso de que el nodo no se haya conectado, se fuerza a que tenga almenos un enlace
+				BarabasiVariantEnforceLink(intList,d,g,r);
+			}
+			
+		}
+		return g;
+	}
+	
+	/**
+	 * Función para generar un grafo usando el modelo Barabasi.
+	 * Nota: a diferencia de la función anterior, se escogen los nodos de manera aleatoria
+	 * @param n	Numero de nodos
+	 * @param d	Grado máximo de los nodo
+	 * @return	Grafo
+	 */
+	public static Graph genBarabasiRandom(int n,double d) {
+		Random r=new Random();
+		Graph g=new Graph();
+		List<Integer> intList = new ArrayList<Integer>();
+		
+		int i,j,k,l;
+		for(i=0;i<n;i++) {
+			g.addNode(i);
+			
+		}
+		intList.add(0);
+		for(i=1;i<d;i++) {
+			intList.add(i);
+			j=i-1;
+			g.linkNodes(i,j);
+		}
+		
+		for(;i<n;i++) {
+			Collections.shuffle(intList);
+			intList.add(i);
+			for(j=0;j<intList.size();j++) {
+				l=intList.get(j);
+				k=g.nodes.get(l).size();
+				if(r.nextDouble()<k/d) {
+					if(g.linkNodes(i,l)) {
+						if( k==d-1) {
+							intList.remove(j);
+							j--;
+						}
+						break;
+					}
+				}
+				
+			}
+			if(g.nodes.get(i).size()==0) { //en caso de que el nodo no se haya conectado, se fuerza a que tenga almenos un enlace
+				BarabasiVariantEnforceLink(intList,d,g,r);
+			}
+			
+		}
+		return g;
+	}
+	
+	
+	public static Graph genBarabasiVariant(int n,double d) {
+		Random r=new Random();
+		Graph g=new Graph();
+		List<Integer> intList = new ArrayList<Integer>();
+		int i,j,k,l;
+		for(i=0;i<n;i++) {
+			g.addNode(i);
+		}
+		intList.add(0);
+		for(i=1;i<d;i++) {
+			intList.add(i);
+			j=i-1;
+			g.linkNodes(i,j);
+			
+		}
+		
+		for(;i<n;i++) {
+			intList.add(i);
+			for(j=0;j<intList.size();j++) {
+				l=intList.get(j);
+				k=g.nodes.get(l).size();
+				if( k<d) {
+					if(r.nextDouble()<k/d) {
+						if(g.linkNodes(i,l)) {
+							if(g.nodes.get(l).size()==d) {
+								intList.remove(j);
+								j--;
+							}
+							if(g.nodes.get(i).size()==(d-1)) { //Con esta condicion se asegura que el siguiente nodo tendrá un espacio libre con quien conectarse
+								break;
+							}
+						}
+					}
+				}
+			}
+			if(g.nodes.get(i).size()==0) { //en caso de que el nodo no se haya conectado, se fuerza a que tenga almenos un enlace
+				BarabasiVariantEnforceLink(intList,d,g,r);
+			}
+			
+		}
+		return g;
+	}
+	
+	public static Graph genBarabasiVariantRandoms(int n,double d) {
+		Random r=new Random();
+		Graph g=new Graph();
+		List<Integer> intList = new ArrayList<Integer>();
+		int i,j,k,l;
+		for(i=0;i<n;i++) {
+			g.addNode(i);
+		}
+		intList.add(0);
+		for(i=1;i<d;i++) {
+			intList.add(i);
+			j=i-1;
+			g.linkNodes(i,j);
+			
+		}
+		
+		for(;i<n;i++) {
+			Collections.shuffle(intList);
+			for(j=0;j<intList.size();j++) {
+				l=intList.get(j);
+				k=g.nodes.get(l).size();
+				//if( k<d) {
+					if(r.nextDouble()<k/d) {
+						if(g.linkNodes(i,l)) {
+							if(k==(d-1)) {
+								intList.remove(j);
+								j--;
+							}
+							if(g.nodes.get(i).size()==(d-1)) { //Con esta condicion se asegura que el siguiente nodo tendrá un espacio libre con quien conectarse
+								break;
+							}
+						}
+					}
+				//}
+			}
+			intList.add(i);
+			if(g.nodes.get(i).size()==0) { //en caso de que el nodo no se haya conectado, se fuerza a que tenga almenos un enlace
+				BarabasiVariantEnforceLink(intList,d,g,r);
+			}
+			
+		}
+		return g;
+	}
+	
+	public static Graph genBarabasiVariantRandom(int n,double d) {
+		Random r=new Random();
+		Graph g=new Graph();
+		List<Integer> intList = new ArrayList<Integer>();
+		int i,j,k,l;
+		for(i=0;i<n;i++) {
+			g.addNode(i);
+		}
+		intList.add(0);
+		for(i=1;i<d;i++) {
+			intList.add(i);
+			j=i-1;
+			g.linkNodes(i,j);
+			
+		}
+		
+		for(;i<n;i++) {
+			for(j=0;j<d-1;j++) {
+				Collections.shuffle(intList);
+				BarabasiVariantEnforceLink(intList,i,d,g,r);
+			}
+			intList.add(i);
+			
+		}
+		return g;
+	}
+	
+	private static void BarabasiVariantEnforceLink(List<Integer> intList,int i,double d,Graph g, Random r) {
+		int j,k,l;
+		while(true) {
+			for(j=0;j<intList.size();j++) {
+				l=intList.get(j);
+				k=g.nodes.get(l).size();
+				if(r.nextDouble()<k/d) {
+					if(g.linkNodes(intList.get(i),l)) {
+						if(k==(d-1)) {
+							intList.remove(j);
+						}
+						return;
+					}
+				}
+				
+			}
+		}
+	}
+	
+	public String toGrahpViz() {
+		String res="graph {\n";
+		for ( Integer node : nodes.keySet() ) {
+			res+="  "+node+";\n";
+		}
+		for (Map.Entry<Integer,Set<Integer>> n : nodes.entrySet()) {
+			Integer node=n.getKey();
+			
+			for (Integer value : n.getValue()) {
+				if (node<value) {
+					res+="  "+node+" -- "+value+";\n";
+				}
+				
+			}
+			
+	    }
+		
+		res+="}";
+		return res;
+	}
+}
