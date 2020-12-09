@@ -1,8 +1,10 @@
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +34,17 @@ public class Graph {
 		this.dirigido=dirigido;
 	}
 	
+	/**
+	 * Función para glonar un grafo
+	 * @return Copia del grafo
+	 */
+	public Graph clone() {
+		Graph g = new Graph(this.dirigido);
+		for ( Integer node : nodes.keySet() ) {
+			g.addNode(node,nodes.get(node));
+		}
+		return g;
+	}
 	/**
 	 * Función para añadir un nodo
 	 * @param id	recibe el identificador del nodo
@@ -63,6 +76,9 @@ public class Graph {
 		nodes.remove(id);
 	}
 	
+	public int getSize() {
+		return nodes.size();
+	}
 	
 	/**
 	 * Función para obtener los nodos vecinos de un determinado nodo
@@ -72,6 +88,16 @@ public class Graph {
 	public Set<Integer> getNeighbors(int id) {
 		return nodes.get(id);
 	}
+	
+	public boolean existsNode(int id) {
+		if(nodes.get(id) ==null) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	
 	
 	/**
 	 * Función para enlazar dos nodos
@@ -95,6 +121,16 @@ public class Graph {
 		
 	}
 	
+	/**
+	 * Función para comprobar si existe la conexión de a->b
+	 * @param a Nodo a
+	 * @param b Nodo b
+	 * @return retorna true si existe la conexión
+	 */
+	public boolean isLinked(int a,int b) {
+		return nodes.get(a).contains(b);
+	}
+	
 
 	/**
 	 * Función para guardar el nodo en un archivo
@@ -110,6 +146,55 @@ public class Graph {
 		      System.out.println("Ha ocurrido un error al guardar el grafo: "+filename);
 		      e.printStackTrace();
 		    }
+	}
+	
+	/**
+	 * Carga un grafo a partir de un archivo .gv.
+	 * Nota: solo se ha probado con los mismos archivos que genera esta biblioteca.
+	 * @param filename Archivo a cargar con extension .gv
+	 * @return Grafo
+	 */
+	public static Graph loadFile(String filename) {
+		Graph g=null;
+		boolean dirigido=false;
+		try{	
+			File file=new File(filename);
+			FileReader fr=new FileReader(file);  
+			BufferedReader br=new BufferedReader(fr);
+			String line;
+			String[] n;
+			line=br.readLine();
+			if (line.contains("digraph")) {
+				dirigido=true;
+			}else{
+				dirigido=false;
+			}
+			g=new Graph(dirigido);
+			while((line=br.readLine())!=null){
+				line=line.trim();
+				if(line.contains(";")) {
+					line=line.replace(";", "");
+					if(line.contains("-")) {
+						if(dirigido) {
+							n=line.split("->");
+							g.linkNodes(Integer.parseInt(n[0].trim()), Integer.parseInt(n[1].trim()));
+						}else {
+							n=line.split("--");
+							g.linkNodes(Integer.parseInt(n[0].trim()), Integer.parseInt(n[1].trim()));
+						}
+					}else {
+						g.addNode(Integer.parseInt(line));
+					}
+				}
+				
+			}  
+			fr.close();
+		}  
+		catch(IOException e){  
+			e.printStackTrace();  
+		}
+		return g;
+		
 	}
 	
 	
@@ -188,7 +273,6 @@ public class Graph {
 			g.addNode(i);
 			p[i]= new Point2D.Double(r.nextDouble(),r.nextDouble());
 		}
-		float k=0;
 		for(int i=0;i<n;i++) {
 			for(int j=0;j<n;j++) {
 				if(i!=j) {
@@ -431,6 +515,177 @@ public class Graph {
 			}
 		}
 	}
+	
+	/**
+	 * Función que retorna el arbol BFS de la instancia Graph que manda a llamar el método
+	 * @param n índice del nodo que será tomado como nodo raiz
+	 * @return Arbol BFS
+	 */
+	public Graph getBFS(int n) {
+		return getBFSFromGraph(this,n);
+	}
+	
+	/**
+	 * Función que retorna el arbol BFS de la instancia Graph que se manda como parámetro
+	 * @param S grafo del cual se desea obtener su arbol BFS
+	 * @param n índice del nodo que será tomado como nodo raiz
+	 * @return Arbol BFS
+	 */
+	public static Graph getBFSFromGraph(Graph S,int n) {
+		if(!S.existsNode(n)) {
+			System.err.println("El nodo raiz no existe");
+			return null;
+		}
+		
+		boolean[] explorados;
+		ArrayList<Integer> queue;
+		Graph G = new Graph();
+		int i;
+		explorados = new boolean[S.getSize()];
+		for(i=0;i<explorados.length;i++) explorados[i]=false;
+		queue = new ArrayList<Integer>();
+		queue.add(n);
+		explorados[n]=true;
+		G.addNode(n);
+		
+		while(queue.size() != 0) {
+			i = queue.get(0);
+			queue.remove(0);
+			Set<Integer>neighbors=S.getNeighbors(i);
+			for (Integer value : neighbors) {
+				if(!explorados[value]) {
+					G.linkNodes(i, value);
+					explorados[value]=true;
+					queue.add(value);
+				}
+			}
+		}
+		return G;
+	}
+	
+	/**
+	 * Función que retorna el arbol DFS iterativo de la instancia Graph que manda a llamar el método
+	 * @param n índice del nodo que será tomado como nodo raiz
+	 * @return Arbol DFSi
+	 */
+	public Graph getDFSi(int n) {
+		return getDFSi_FromGraph(this,n);
+	}
+	
+	/**
+	 * Función que retorna el arbol DFS iterativo de la instancia Graph que se manda como parámetro
+	 * @param S grafo del cual se desea obtener su arbol DFSi
+	 * @param n índice del nodo que será tomado como nodo raiz
+	 * @return Arbol DFSi
+	 */
+	public static Graph getDFSi_FromGraph(Graph S,int n) {
+		if(!S.existsNode(n)) {
+			System.err.println("El nodo raiz no existe");
+			return null;
+		}
+		
+		int i;
+		int j;
+		boolean[] explorados = new boolean[S.getSize()];
+		for(i=0;i<explorados.length;i++) explorados[i]=false;
+		
+		ArrayList<Integer> visitados,por_visitar;
+		por_visitar = new ArrayList<Integer>();
+		visitados = new ArrayList<Integer>();
+		Set<Integer>neighbors;
+		
+		boolean backwards=false;
+		Graph G = new Graph();
+		
+		por_visitar.add(n);
+		G.addNode(n);
+		
+		while(por_visitar.size() != 0) {
+			j = por_visitar.size()-1;
+			i = por_visitar.get(j);
+			por_visitar.remove(j);
+			if(explorados[i]) {
+				continue;
+			}
+			explorados[i]=true;
+			visitados.add(i);
+			backwards=true;
+			
+			neighbors=S.getNeighbors(i);
+			for (Integer value : neighbors) {
+				if(!explorados[value]) {
+					backwards=false;
+					por_visitar.add(value);
+				}
+			}
+			while( (visitados.size() > 1) && backwards) {
+				i = visitados.size()-1;
+				j= visitados.get(i-1);
+				G.linkNodes(visitados.get(i), j);
+				visitados.remove(i);
+				neighbors=S.getNeighbors(j);
+				for (Integer value : neighbors) {
+					if(!explorados[value]) {
+						backwards=false;
+					}
+				}
+				
+			}
+		}
+		return G;
+	}
+	
+	/**
+	 * Función que retorna el arbol DFS recursivo de la instancia Graph que manda a llamar el método
+	 * @param n índice del nodo que será tomado como nodo raiz
+	 * @return Arbol DFSr
+	 */
+	public Graph getDFSr(int n) {
+		return getDFSFromGraph(this,n);
+	}
+	
+	/**
+	 * Función para obtener el arbol DFS recursivo de la instancia Graph que se manda como parámetro
+	 * Esta función manda a llamar una función recursiva, la diferencia entre esta y la recursiva es que en esta
+	 * se inicializan las variables G y explorados.
+	 * @param S grafo del cual se desea obtener su arbol DFSr
+	 * @param n índice del nodo que será tomado como nodo raiz
+	 * @return Arbol BFS
+	 */
+	public static Graph getDFSFromGraph(Graph S,int n) {
+		if(!S.existsNode(n)) {
+			System.err.println("El nodo raiz no existe");
+			return null;
+		}
+		Graph G = new Graph();
+		boolean [] explorados = new boolean[S.getSize()];
+		for(int i=0;i<explorados.length;i++) explorados[i]=false;
+		explorados[n]=true;
+		G.addNode(n);
+		getDFSr(n,S,G,explorados);
+		return G;
+	}
+	
+	/**
+	 * Función recursiva para obtener el arbol DFS. Esta función no necesita retornar nada ya que
+	 * al recibir un objeto tipo Grafo, este es un parametro por referencia y al modificarlo dentro
+	 * del método tambien se modifica en el método que lo mandó a llamar
+	 * @param n nodo raiz
+	 * @param S Grafo fuente
+	 * @param G Arbol BFS
+	 * @param explorados variable para saber los nodos explorados
+	 */
+	private static void getDFSr(int n,Graph S, Graph G, boolean[] explorados) {
+		Set<Integer>neighbors=S.getNeighbors(n);
+		for (Integer value : neighbors) {
+			if(!explorados[value]) {
+				explorados[value]=true;
+				G.linkNodes(n, value);
+				getDFSr(value,S,G,explorados);
+			}
+		}
+	}
+	
 	
 	/**
 	 * funcion que retorna un String con el formato GraphViz 
