@@ -1,0 +1,157 @@
+package rendering;
+
+
+import java.io.IOException;
+import java.util.Random;
+
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSinkImages;
+import org.graphstream.stream.file.FileSinkImages.LayoutPolicy;
+import org.graphstream.stream.file.FileSinkImages.OutputType;
+import org.graphstream.stream.file.FileSinkImages.Resolutions;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceDOT;
+
+public class Main {
+	 
+	public static Graph load(String filePath) {
+		return load(filePath,50);
+	}
+	public static Graph load(String filePath,int size) {
+		System.out.println("Loading "+filePath);
+		Graph g = new DefaultGraph("g");
+		try {
+			FileSource fs =  new FileSourceDOT();
+			fs.addSink(g);
+			fs.readAll(filePath);
+			fs.removeSink(g);
+		} catch( IOException e) {
+			e.printStackTrace();
+		}
+		String styleSheet =
+		        "node {" +
+		        
+		        "	fill-mode: dyn-plain;" +
+		       "	fill-color: blue,green,red,cyan,magenta,yellow;" +
+		        "   size: "+size+"px, "+size+"px;"+
+		        "   text-size: "+(int)(size/3)+"px;"+
+		        "}" +
+		        "edge {" +
+		        "	size: 3px;" +
+		        "   text-size: "+(int)(size/3)+"px;"+
+		        "	arrow-size: "+(int)(size/3)+"px, "+(int)(size/4)+"px;"+
+		        "}" +
+		        "node.marked {" +
+		        "	fill-color: red;" +
+		        "}";
+		g.setAttribute("ui.stylesheet", styleSheet);
+		Random r = new Random();
+		for (Node node : g) {
+	        //node.setAttribute("ui.label", node.getId());
+	        //node.setAttribute("ui.color",r.nextInt(6)/5.0+r.nextDouble()/20);
+	        node.setAttribute("ui.color",r.nextDouble());
+	        /*Iterator<Edge> ite = node.getEnteringEdgeIterator();
+	        while(ite.hasNext()) {
+	        	Edge edge=ite.next();
+	        	edge.setAttribute("ui.label", edge.getLabel("label"));
+	        	  
+	        }*/
+	    }
+		return g;
+	}
+	
+	public static FileSinkImages FS() {
+	    FileSinkImages fs = new FileSinkImages(OutputType.PNG, Resolutions.UHD_8K_1by1  );
+	    fs.setQuality(FileSinkImages.Quality.HIGH);
+	    fs.setLayoutPolicy(LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);
+	    fs.setRenderer(FileSinkImages.RendererType.SCALA);
+	    return fs;
+	}
+
+	public static void core() throws IOException {
+		String filepathgv="../CreandoGrafos/gv/";
+		String filepathpng="../CreandoGrafos/png/";
+		String filename;
+		int size;
+		Graph g;
+		FileSinkImages fs;
+		String start="w_";
+		
+		String[] files = new String[]{
+				start+"erdosRenyi",
+				start+"gilbert",
+				start+"geografico",
+				start+"barabasi"
+				};
+		String[] arboles = new String[]{
+				"DFSi",
+				"DFSr",
+				"BFS"
+				};
+		Integer[] nodes_number= new Integer[] {30,100,500};
+		
+		for (String tipo : files) {
+			for (Integer number : nodes_number) {
+				size= (int)(-50*Math.log(number*0.0009));
+				//System.out.println("number="+number+" size="+size);
+				filename=tipo+"_"+number;
+				g = load(filepathgv+filename+".gv",size);
+				fs = FS();
+				fs.writeAll(g, filepathpng+filename+".png");
+				System.out.println("Guardado correctamente como: "+filepathpng+filename+".png");
+				for(String arbol : arboles) {
+					filename="arbol_"+arbol+"_"+tipo+"_"+number;
+					g = load(filepathgv+filename+".gv",size);
+					fs = FS();
+					fs.writeAll(g, filepathpng+filename+".png");
+					System.out.println("Guardado correctamente como: "+filepathpng+filename+".png");
+				}
+				
+			}
+		}
+		System.out.println("Proceso terminado");
+	}
+	
+	
+	public static void core2() throws IOException {
+		String filepathgv="../CreandoGrafos/gv/";
+		String filepathpng="../CreandoGrafos/png/";
+		String filename;
+		int size;
+		Graph g;
+		FileSinkImages fs;
+		String start="D_0_";
+		
+		String[] files = new String[]{
+				start+"erdosRenyi",
+				start+"gilbert",
+				start+"geografico",
+				start+"barabasi"
+				};
+		Integer[] nodes_number= new Integer[] {30,100,500};
+		
+		for (String tipo : files) {
+			for (Integer number : nodes_number) {
+				size= (int)(-50*Math.log(number*0.0009));
+				//System.out.println("number="+number+" size="+size);
+				filename=tipo+"_"+number;
+				g = load(filepathgv+filename+".gv",size);
+				fs = FS();
+				fs.writeAll(g, filepathpng+filename+".png");
+				System.out.println("Guardado correctamente como: "+filepathpng+filename+".png");
+				
+			}
+		}
+		System.out.println("Proceso terminado");
+	}
+	
+	
+	public static void main(String[] args) throws IOException {
+		System.setProperty("org.graphstream.ui", "swing");
+		//core();
+		core2();
+	}
+
+}
