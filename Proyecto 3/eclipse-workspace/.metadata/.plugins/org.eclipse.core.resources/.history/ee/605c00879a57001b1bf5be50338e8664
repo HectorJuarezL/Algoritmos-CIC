@@ -1,0 +1,5 @@
+
+public class Edge {
+	int b;
+	int w;
+}

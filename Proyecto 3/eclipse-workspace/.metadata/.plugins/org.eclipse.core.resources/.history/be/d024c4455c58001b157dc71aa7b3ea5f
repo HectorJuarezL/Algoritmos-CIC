@@ -1,0 +1,24 @@
+import java.util.Random;
+
+public class Edge {
+	private static Random r = new Random();
+	int b;
+	double w;
+	
+	public static void setRanrom(Random r) {
+		Edge.r=r;
+	}
+	
+	public Edge(int b,double w) {
+		this.b=b;
+		this.w=w;
+	}
+	public Edge(int b) {
+		this.b=b;
+		this.w=r.nextDouble()*100;
+	}
+	
+	public int intValue() {
+		return b;
+	}
+}

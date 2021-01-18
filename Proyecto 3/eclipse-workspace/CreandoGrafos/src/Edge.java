@@ -1,0 +1,35 @@
+
+import java.util.Random;
+
+public class Edge{
+	private static Random r = new Random();
+	int a;
+	int b;
+	int w;
+	
+	public static void setRanrom(Random r) {
+		Edge.r=r;
+	}
+	
+	public Edge(int a,int b,int w) {
+		this.a=a;
+		this.b=b;
+		this.w=w;
+	}
+	
+	public Edge(int a,int b) {
+		this.a=a;
+		this.b=b;
+		this.w=r.nextInt(100)+1;
+	}
+	
+	public int intValue() {
+		return b;
+	}
+	
+	
+    @Override
+	public String toString() {
+		return a+"--"+b+" ["+w+"]";
+	}
+}

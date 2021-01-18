@@ -1,0 +1,13 @@
+
+public class Edge {
+	int b;
+	float w;
+	public Edge(int b,float w) {
+		this.b=b;
+		this.w=w;
+	}
+	public Edge(int b) {
+		this.b=b;
+		this.w=1;
+	}
+}

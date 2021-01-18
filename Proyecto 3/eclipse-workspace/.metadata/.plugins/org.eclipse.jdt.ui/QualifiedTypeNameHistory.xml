@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.util.HashMap"/>
+    <fullyQualifiedTypeName name="java.util.HashSet"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="java.awt.geom.Point2D"/>
+    <fullyQualifiedTypeName name="java.awt.geom.Point2D.Double"/>
+    <fullyQualifiedTypeName name="java.io.FileWriter"/>
+    <fullyQualifiedTypeName name="java.util.Arrays"/>
+    <fullyQualifiedTypeName name="com.sun.tools.javac.util.List"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="java.util.Collections"/>
+    <fullyQualifiedTypeName name="java.util.Queue"/>
+    <fullyQualifiedTypeName name="java.util.Set"/>
+    <fullyQualifiedTypeName name="java.io.FileReader"/>
+    <fullyQualifiedTypeName name="java.io.File"/>
+    <fullyQualifiedTypeName name="java.io.BufferedReader"/>
+    <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="org.graphstream.graph.implementations.MultiGraph"/>
+    <fullyQualifiedTypeName name="org.graphstream.graph.implementations.SingleGraph"/>
+    <fullyQualifiedTypeName name="org.graphstream.graph.Graph"/>
+    <fullyQualifiedTypeName name="org.graphstream.ui.view.Viewer"/>
+    <fullyQualifiedTypeName name="org.graphstream.graph.implementations.DefaultGraph"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSource"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSourceFactory"/>
+    <fullyQualifiedTypeName name="java.io.IOException"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSourceDGS"/>
+    <fullyQualifiedTypeName name="org.graphstream.graph.Node"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.images.Resolutions"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.images.Resolution"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages.OutputType"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages.OutputPolicy"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages.LayoutPolicy"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages.Resolutions"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages.Quality"/>
+    <fullyQualifiedTypeName name="org.graphstream.stream.file.FileSinkImages.RendererType"/>
+    <fullyQualifiedTypeName name="org.graphstream.graph.Edge"/>
+    <fullyQualifiedTypeName name="java.util.Iterator"/>
+    <fullyQualifiedTypeName name="java.util.Random"/>
+    <fullyQualifiedTypeName name="java.util.Comparator"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+</qualifiedTypeNameHistroy>
