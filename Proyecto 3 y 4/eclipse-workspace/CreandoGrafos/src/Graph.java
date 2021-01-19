@@ -49,11 +49,21 @@ public class Graph {
 	}
 	
 	
-	
+	/**
+	 * Función para obtener todas las aristas del grafo. 
+	 * Por defecto, las retorna de manera ascendente con respecto a su peso.
+	 * @return ArrayList de aristas
+	 */
 	public ArrayList<Edge> getEdges(){
 		return getEdges(true);
 	}
 	
+	/**
+	 * Función para obtener todas las aristas del grafo. 
+	 * @param asc valor para ordenar las aristas ya sea ascendente (true) o
+	 * 			descendente (false)
+	 * @return ArrayList de aristas
+	 */
 	public ArrayList<Edge> getEdges(boolean asc) {
 		Set<Edge> edges_set = new HashSet<Edge>();
 		for (Map.Entry<Integer,Set<Edge>> n : nodes.entrySet()) {
@@ -89,23 +99,28 @@ public class Graph {
 		return edges;
 	}
 	
-	public boolean changeEdge(int a,int b,int new_a,int new_b) {
-		Set<Edge> edges = nodes.get(a);
-		for(Edge edge : edges){
-			if(edge.a==a) {
-				edge.a=new_a;
-			}
-			if(edge.b==b) {
-				edge.b=new_b;
-			}
+
+	/**
+	 * Funcion para obtener la suma de los pesos de las aristas de un grafo
+	 * @return peso del grafo
+	 */
+	public long getGraphWeight() {
+		long sum=0;
+		for (Edge e:getEdges()) {
+			sum+=e.w;
 		}
-		this.addNode(new_a, edges);
-		this.dropNode(a);
-		return true;
+		if(!dirigido) {
+			sum/=2;
+		}
+		return sum;
 	}
 	
-	
-	
+	/**
+	 * Funcion para obtener el peso de una arista dada por sus nodos
+	 * @param a nodo a
+	 * @param b nodo b
+	 * @return peso de la arista
+	 */
 	public int getW(int a,int b) {
 		if (existsNode(a) && existsNode(b)) {
 			for (Edge value : nodes.get(a)) {
@@ -130,6 +145,11 @@ public class Graph {
 		}
 	}
 	
+	/**
+	 * Funcion para añadir un nodo y establecer una etiqueta personalizada a ese nodo
+	 * @param id identificador del nodo
+	 * @param label etiqueta del nodo
+	 */
 	public void addNode(int id, String label) {
 		if (!nodes.containsKey(id)) {
 			nodes.put(id,new HashSet<Edge>());
@@ -153,16 +173,11 @@ public class Graph {
 		
 	}
 	
+	
 	/**
-	 * Función para eliminar un nodo
-	 * @param id	Ientificador del nodo a eliminar
+	 * Funcion para eliminar una arista del grafo
+	 * @param e recibe la arista a eliminar
 	 */
-	public void dropNode(int id) {
-		nodes.remove(id);
-		labels.remove(id);
-	}
-	
-	
 	public void dropEdge(Edge e) {
 		nodes.get(e.a).remove(e);
 		if (!dirigido) {
@@ -170,6 +185,10 @@ public class Graph {
 		}
 	}
 	
+	/**
+	 * Funcion para obtener el numero de nodos del grafo
+	 * @return número de nodos del grafo
+	 */
 	public int getSize() {
 		return nodes.size();
 	}
@@ -183,7 +202,11 @@ public class Graph {
 		return nodes.get(id);
 	}
 	
-	
+	/**
+	 * Funcion para comprobar si existe un nodo
+	 * @param id identificador del nodo a comprobar
+	 * @return retorna true si si existe el nodo, de lo contrario retorna false
+	 */
 	public boolean existsNode(int id) {
 		if(nodes.get(id) ==null) {
 			return false;
@@ -209,16 +232,6 @@ public class Graph {
 	}
 	
 	
-	public boolean updateW(int a,int b,int w) {
-		for (Edge e : nodes.get(a)) {
-			if (e.b==b) {
-				e.w=w;
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * Función para enlazar dos nodos
 	 * @param a	identificador del primer nodo
@@ -229,12 +242,24 @@ public class Graph {
 		return linkNodes(new Edge(a,b));
 	}
 
-	
+	/**
+	 * Función para enlazar dos nodos
+	 * @param a	identificador del primer nodo
+	 * @param b	identificador del segundo nodo
+	 * @param w valor del peso del enlace
+	 * @return	retorna true si los nodos no estaban unidos previamente, en caso de que ya estuvieran unidos retorna falso
+	 */
 	public boolean linkNodes(int a, int b, int w) {
 		return linkNodes(new Edge(a,b,w));
 		
 	}
 	
+	
+	/**
+	 * Función para enlazar dos nodos
+	 * @param e	arista del enlace, esta contiene la informacion de los nodos a unir y el peso del enlace
+	 * @return	retorna true si los nodos no estaban unidos previamente, en caso de que ya estuvieran unidos retorna falso
+	 */
 	public boolean linkNodes(Edge e) {
 		if (!nodes.containsKey(e.a)  ) {
 			this.addNode(e.a);
@@ -291,6 +316,12 @@ public class Graph {
 		System.out.println(s);
 	}
 	
+	
+	/**
+	 * Funcion para cargar un grafo desde un archivo
+	 * @param filename Nombre del archivo
+	 * @return instancia tipo Graph
+	 */
 	public static Graph loadFile(String filename) {
 		Graph g=null;
 		boolean dirigido=false;
@@ -841,6 +872,12 @@ public class Graph {
 		}
 	}
 	
+	/**
+	 * Función para obtener el arbol de distancia mínima dado un nodo fuente.
+	 * Está basado en el algoritmo BFS para la exploración de nodos.
+	 * @param n identificador del nodo fuente
+	 * @return Instancia tipo Graph cuyas etiquetas de los nodos estan acompañadas de la distancia minima al nodo fuente.
+	 */
 	public Graph getDijkstra(int n) {
 		return Graph.getDijkstra(this, n);
 	}
@@ -894,11 +931,21 @@ public class Graph {
 		return G;
 	}
 	
+	/**
+	 * Obtiene el componente conectado de un grafo a partir de un nodo fuente.
+	 * @param n identificador del nodo fuente
+	 * @return Instancia tipo Graph
+	 */
 	public Graph getConnectedGraph(int n){
 		return Graph.getConnectedGraph(this, n);
 	}
 	
-	
+	/**
+	 * Obtiene el componente conectado de un grafo a partir de un nodo fuente.
+	 * @param S Grafo del cual se obtendrá el componente conectado
+	 * @param n identificador del nodo fuente
+	 * @return Instancia tipo Graph
+	 */
 	public static Graph getConnectedGraph(Graph S, int n){
 		if(!S.existsNode(n)) {
 			System.err.println("El nodo raiz no existe");
@@ -932,6 +979,14 @@ public class Graph {
 		return G;
 	}
 	
+	/**
+	 * Funcion para unir los conjuntos de dados dos nodos. Para representar un conjunto
+	 * se utilizó una tabla hash donde la key es el identificador del nodo
+	 * y el value el valor del conjunto al cual pertenece.
+	 * @param conj tabla hash con la información del conjunto
+	 * @param a identificador del nodo a
+	 * @param b identificador del nodo b
+	 */
 	private static void Union(HashMap<Integer,Integer> conj,int a,int b){
 		a=conj.get(a);
 		b=conj.get(b);
@@ -942,10 +997,21 @@ public class Graph {
 		}
 	}
 	
+	/**
+	 * Funcion para obtener el grafo arbol MST usando el algoritmo Kruskal
+	 * @param n Identificador del nodo para obtener su componente conectado antes de aplicar el algoritmo
+	 * @return Instancia tipo grafo con el arbol MST
+	 */
 	public Graph getKruskal(int n) {
 		return Graph.getKruskal(this,n);
 	}
 	
+	/**
+	 * Funcion para obtener el grafo arbol MST usando el algoritmo Kruskal
+	 * @param S arbol al cual se aplica el algoritmo
+	 * @param n Identificador del nodo para obtener su componente conectado antes de aplicar el algoritmo1
+	 * @return Instancia tipo grafo con el arbol MST
+	 */
 	public static Graph getKruskal(Graph S,int n) {
 		S=S.getConnectedGraph(n);
 		Graph G = new Graph(S.dirigido);
@@ -964,10 +1030,25 @@ public class Graph {
 		return G;
 	}
 	
+	
+	/**
+	 * Funcion para comprobar si estan conectados dos nodos
+	 * @param a identificador del nodo a
+	 * @param b identificador del nodo b
+	 * @return retorna true si estan conectados o false de lo contrario.
+	 */
 	public boolean isConnected(int a,int b) {
 		return Graph.isConnected(this, a, b);
 	}
 	
+	/**
+	 * Funcion para comprobar si estan conectados dos nodos.
+	 * Está basado en el algoritmo BFS para exploración de grafos
+	 * @param S Grafo desde el cual se hace el recorrido.
+	 * @param a identificador del nodo a
+	 * @param b identificador del nodo b
+	 * @return retorna true si estan conectados o false de lo contrario.
+	 */
 	public static boolean isConnected(Graph S,int a,int b) {
 		if(!S.existsNode(a) || !S.existsNode(b) ) {
 			System.err.println("El nodo raiz no existe");
@@ -1003,10 +1084,25 @@ public class Graph {
 		return false;
 	}
 	
+	/**
+	 * Funcion para obtener el arbol MST de un grafo usando el
+	 * algoritmo de kruskal inverso
+	 * @param n identificador del nodo fuene para obtener primero el
+	 * 	componente conectado del grafo.
+	 * @return Instancia tipo Graph con el arbol MST
+	 */
 	public Graph getKruskal_i(int n) {
 		return Graph.getKruskal_i(this,n);
 	}
 	
+	/**
+	 * Funcion para obtener el arbol MST de un grafo usando el
+	 * algoritmo de kruskal inverso
+	 * @param S grafo al cual obtener su MST
+	 * @param n identificador del nodo fuene para obtener primero el
+	 * 	componente conectado del grafo.
+	 * @return Instancia tipo Graph con el arbol MST
+	 */
 	public static Graph getKruskal_i(Graph S,int n) {
 		S=S.getConnectedGraph(n);
 		Graph G = S.clone();
@@ -1023,7 +1119,12 @@ public class Graph {
 	}
 	
 
-	
+	/**
+	 * Funcion para obtener la arista con el peso minimo dado un 
+	 * ArrayList de aristas
+	 * @param edges ArrayList con aristas
+	 * @return Arista con el peso minimo
+	 */
 	private static Edge min_edge(ArrayList<Edge> edges) {
 		Edge min=edges.get(0);
 		for (Edge e:edges) {
@@ -1034,6 +1135,13 @@ public class Graph {
 		return min;
 	}
 	
+	
+	/**
+	 * Funcion para obtener el arbol de expansion mínima usando el algoritmo de Prim.
+	 * @param S 
+	 * @param n
+	 * @return
+	 */
 	public Graph getPrim(int n){
 		return getPrim_variante(this,n);
 	}
@@ -1042,12 +1150,10 @@ public class Graph {
 	/**
 	 * Funcion para obtener el arbol de expansion mínima usando el algoritmo de Prim.
 	 * Lo nombré variante porque no es igual al algoritmo del video
-	 * pero si es igual a la prueba de escritorio que realizó. Por lo que entendí
-	 * del algoritmo, permite calcular el peso minimo del arbol pero no el arbol en sí,
-	 * por eso realicé esta variante.
-	 * @param S 
-	 * @param n
-	 * @return
+	 * pero si es igual a la prueba de escritorio que realizó. 
+	 * @param S Grafo del cual obtener su MST
+	 * @param n identificador del nodo con el que comenzará el algoritmo
+	 * @return instancias tipo Graph con el MST
 	 */
 	public static Graph getPrim_variante(Graph S,int n) {
 		Graph G = new Graph(S.dirigido);
@@ -1090,49 +1196,6 @@ public class Graph {
 		
 		return G;
 	}
-	
-	/*
-	public static Graph getPrim(Graph S,int n) {
-		Graph G = new Graph(S.dirigido);
-		S=S.getConnectedGraph(n);
-		
-		if(!S.existsNode(n) ) {
-			System.err.println("El nodo raiz no existe");
-			return null;
-		}
-		
-		HashMap<Integer, Boolean> explorados = new HashMap<>();
-		HashMap<Integer, Integer> distancia = new HashMap<>();
-		ArrayList<Integer> queue = new ArrayList<Integer>();
-		for ( int node : S.nodes.keySet() ) {
-			explorados.put(node,false);
-			distancia.put(node, Integer.MAX_VALUE);
-			queue.add(node);
-		}
-		explorados.put(n, true);
-		int i;
-		
-		while(queue.size() > 0) {
-			i = queue.get(0);
-			queue.remove(0);
-			G.linkNodes(i);
-			explorados.put(i.b, true);
-			neighbors=S.getNeighbors(i.b);
-			for (Edge edge : neighbors) {
-				if(!explorados.get(edge.b) && edge.w < distancia.get(edge.b)) {
-					queue.add(edge);
-				}
-			}
-			for (Edge edge : queue) {
-				if (edge.b==i.b) {
-					queue.remove(edge);
-				}
-			}
-		}
-		
-		return G;
-	}
-	*/
 	
 	
 	/**

@@ -79,6 +79,10 @@ public class Index {
 		
 	}
 	
+	
+	/**
+	 * Esta funcion crea grafos con pesos en las aristas
+	 */
 	public static void parte_tres() {
 		String path="gv/";
 		Graph g;
@@ -130,7 +134,6 @@ public class Index {
 		
 		g= Graph.genBarabasiAlbertVariantRandom(nodes_number[2], 5,dirigido,null);
 		g.saveFile(path+files[3]+"_"+nodes_number[2]+".gv");
-		
 
 		
 	}
@@ -143,17 +146,17 @@ public class Index {
 		Graph a,b;
 		
 		String[] files = new String[]{
-				start+"erdosRenyi",
-				start+"gilbert",
-				start+"geografico",
-				start+"barabasi"
+				"erdosRenyi",
+				"gilbert",
+				"geografico",
+				"barabasi"
 				};
 		Integer[] nodes_number= new Integer[] {30,100,500};
 		
 		
 		for (String tipo : files) {
 			for (Integer number : nodes_number) {
-				String filename=tipo+"_"+number+".gv";
+				String filename=start+tipo+"_"+number+".gv";
 				a = Graph.loadFile(path+filename);
 				b=a.getDijkstra(raiz);
 				b.saveFile(path+"D_"+raiz+"_"+filename.replace(start,""));
@@ -163,7 +166,7 @@ public class Index {
 	}
 
 	
-	public static void parte_4_kruskal(){
+	public static void parte_cuatro_kruskal(){
 		String path="gv/";
 		String start="w_";
 		
@@ -171,10 +174,10 @@ public class Index {
 		Graph a,b;
 		
 		String[] files = new String[]{
-				start+"erdosRenyi",
-				start+"gilbert",
-				start+"geografico",
-				start+"barabasi"
+				"erdosRenyi",
+				"gilbert",
+				"geografico",
+				"barabasi"
 				};
 		Integer[] nodes_number= new Integer[] {
 				30,
@@ -184,16 +187,17 @@ public class Index {
 		
 		for (String tipo : files) {
 			for (Integer number : nodes_number) {
-				String filename=tipo+"_"+number+".gv";
+				String filename=start+tipo+"_"+number+".gv";
 				a = Graph.loadFile(path+filename);
 				b=a.getKruskal(raiz);
-				b.saveFile(path+"K_"+raiz+"_"+filename.replace(start,""));
-				
+				filename=path+"K_"+raiz+"_"+filename.replace(start,"");
+				System.out.println("Peso del arbol "+filename+" = "+b.getGraphWeight());
+				b.saveFile(filename);
 			}
 		}
 	}
 	
-	public static void parte_4_kruskal_invertido(){
+	public static void parte_cuatro_kruskal_invertido(){
 		String path="gv/";
 		String start="w_";
 		
@@ -201,10 +205,10 @@ public class Index {
 		Graph a,b;
 		
 		String[] files = new String[]{
-				start+"erdosRenyi",
-				start+"gilbert",
-				start+"geografico",
-				start+"barabasi"
+				"erdosRenyi",
+				"gilbert",
+				"geografico",
+				"barabasi"
 				};
 		Integer[] nodes_number= new Integer[] {
 				30,
@@ -214,16 +218,18 @@ public class Index {
 		
 		for (String tipo : files) {
 			for (Integer number : nodes_number) {
-				String filename=tipo+"_"+number+".gv";
+				String filename=start+tipo+"_"+number+".gv";
 				a = Graph.loadFile(path+filename);
 				b=a.getKruskal_i(raiz);
-				b.saveFile(path+"Ki_"+raiz+"_"+filename.replace(start,""));
+				filename=path+"Ki_"+raiz+"_"+filename.replace(start,"");
+				System.out.println("Peso del arbol "+filename+" = "+b.getGraphWeight());
+				b.saveFile(filename);
 				
 			}
 		}
 	}
 	
-	public static void parte_4_prim() {
+	public static void parte_cuatro_prim() {
 		String path="gv/";
 		String start="w_";
 		
@@ -231,10 +237,10 @@ public class Index {
 		Graph a,b;
 		
 		String[] files = new String[]{
-				start+"erdosRenyi",
-				start+"gilbert",
-				start+"geografico",
-				start+"barabasi"
+				"erdosRenyi",
+				"gilbert",
+				"geografico",
+				"barabasi"
 				};
 		Integer[] nodes_number= new Integer[] {
 				30,
@@ -244,17 +250,23 @@ public class Index {
 		
 		for (String tipo : files) {
 			for (Integer number : nodes_number) {
-				String filename=tipo+"_"+number+".gv";
+				String filename=start+tipo+"_"+number+".gv";
 				a = Graph.loadFile(path+filename);
 				b=a.getKruskal_i(raiz);
-				b.saveFile(path+"P_"+raiz+"_"+filename.replace(start,""));
+				filename=path+"P_"+raiz+"_"+filename.replace(start,"");
+				System.out.println("Peso del arbol "+filename+" = "+b.getGraphWeight());
+				b.saveFile(filename);
 				
 			}
 		}
 	}
 	
 	public static void main(String[] args) {
-		parte_4_prim();
+		//parte_tres(); 
+		parte_tres_dijkstra();
+		parte_cuatro_kruskal();
+		parte_cuatro_kruskal_invertido();
+		parte_cuatro_prim();
 	}
 
 }
